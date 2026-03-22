@@ -1,0 +1,9 @@
+{
+  "name": "業務記録・点呼記録簿",
+  "short_name": "点呼記録",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f1f3f4",
+  "theme_color": "#1a73e8",
+  "icons": []
+}

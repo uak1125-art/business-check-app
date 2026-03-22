@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>業務記録・点呼記録簿</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a73e8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="app-header">
+    <h1>業務記録・点呼記録簿</h1>
+    <span class="badge">MKT</span>
+  </header>
+
+  <!-- タブナビゲーション -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="daily">日次記録</button>
+    <button class="tab-btn" data-tab="monthly">月次一覧</button>
+    <button class="tab-btn" data-tab="settings">設定</button>
+  </nav>
+
+  <!-- ===== 日次記録タブ ===== -->
+  <section id="tab-daily" class="tab-content active">
+    <!-- 月度・基本情報 -->
+    <div class="card info-bar">
+      <div class="info-row">
+        <label>令和
+          <select id="year">
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>年
+          <select id="month">
+            <option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+            <option value="5">5</option><option value="6">6</option>
+            <option value="7">7</option><option value="8">8</option>
+            <option value="9">9</option><option value="10">10</option>
+            <option value="11">11</option><option value="12">12</option>
+          </select>月度
+        </label>
+      </div>
+      <div class="info-row">
+        <span id="display-name" class="display-info"></span>
+        <span id="display-vehicle" class="display-info"></span>
+      </div>
+    </div>
+
+    <!-- 日付選択 -->
+    <div class="card">
+      <div class="day-selector">
+        <button id="prev-day" class="nav-btn">&lt;</button>
+        <span id="current-day" class="current-day">1日 (火)</span>
+        <button id="next-day" class="nav-btn">&gt;</button>
+      </div>
+      <div class="day-grid" id="day-grid"></div>
+    </div>
+
+    <!-- 乗務前 点呼 -->
+    <div class="card">
+      <h2 class="section-title before">乗務前 自主点呼</h2>
+      <div class="form-group">
+        <label>時間</label>
+        <input type="time" id="before-time">
+      </div>
+      <div class="form-group">
+        <label>開始走行距離 (km)</label>
+        <input type="number" id="before-distance" inputmode="numeric" placeholder="例: 98000">
+      </div>
+      <div class="form-group">
+        <label>配達エリア</label>
+        <input type="text" id="delivery-area" placeholder="例: 久留米市">
+      </div>
+      <div class="form-group">
+        <label>アルコール検知器の使用</label>
+        <div class="toggle-group">
+          <button class="toggle-btn active" data-field="before-alcohol" data-value="有">有</button>
+          <button class="toggle-btn" data-field="before-alcohol" data-value="無">無</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>酒気帯び</label>
+        <div class="toggle-group">
+          <button class="toggle-btn" data-field="before-drinking" data-value="有">有</button>
+          <button class="toggle-btn active" data-field="before-drinking" data-value="無">無</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>疾病・疲労等の状況</label>
+        <div class="toggle-group wide">
+          <button class="toggle-btn active" data-field="before-health" data-value="良好">良好</button>
+          <button class="toggle-btn" data-field="before-health" data-value="やや疲労">やや疲労</button>
+          <button class="toggle-btn" data-field="before-health" data-value="不良">不良</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>日常点検の状況</label>
+        <div class="toggle-group wide">
+          <button class="toggle-btn active" data-field="before-inspection" data-value="異常無">異常無</button>
+          <button class="toggle-btn" data-field="before-inspection" data-value="異常有">異常有</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>点呼執行者</label>
+        <input type="text" id="before-inspector" placeholder="点呼執行者名">
+      </div>
+      <div class="form-group">
+        <label>備考</label>
+        <input type="text" id="before-note" placeholder="備考（任意）">
+      </div>
+    </div>
+
+    <!-- 乗務後 点呼 -->
+    <div class="card">
+      <h2 class="section-title after">乗務後 自主点呼</h2>
+      <div class="form-group">
+        <label>時間</label>
+        <input type="time" id="after-time">
+      </div>
+      <div class="form-group">
+        <label>修了走行距離 (km)</label>
+        <input type="number" id="after-distance" inputmode="numeric" placeholder="例: 98060">
+      </div>
+      <div class="form-group">
+        <label>1日の走行距離</label>
+        <div class="calc-display" id="daily-distance">— km</div>
+      </div>
+      <div class="form-group">
+        <label>アルコール検知器の使用</label>
+        <div class="toggle-group">
+          <button class="toggle-btn active" data-field="after-alcohol" data-value="有">有</button>
+          <button class="toggle-btn" data-field="after-alcohol" data-value="無">無</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>酒気帯び</label>
+        <div class="toggle-group">
+          <button class="toggle-btn" data-field="after-drinking" data-value="有">有</button>
+          <button class="toggle-btn active" data-field="after-drinking" data-value="無">無</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>疾病・疲労等の状況</label>
+        <div class="toggle-group wide">
+          <button class="toggle-btn active" data-field="after-health" data-value="良好">良好</button>
+          <button class="toggle-btn" data-field="after-health" data-value="やや疲労">やや疲労</button>
+          <button class="toggle-btn" data-field="after-health" data-value="不良">不良</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>車両の異常</label>
+        <div class="toggle-group wide">
+          <button class="toggle-btn active" data-field="after-vehicle" data-value="異常無">異常無</button>
+          <button class="toggle-btn" data-field="after-vehicle" data-value="異常有">異常有</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>点呼執行者</label>
+        <input type="text" id="after-inspector" placeholder="点呼執行者名">
+      </div>
+      <div class="form-group">
+        <label>備考</label>
+        <input type="text" id="after-note" placeholder="備考（任意）">
+      </div>
+    </div>
+
+    <!-- 保存ボタン -->
+    <div class="action-bar">
+      <button id="save-btn" class="primary-btn">この日を保存</button>
+    </div>
+  </section>
+
+  <!-- ===== 月次一覧タブ ===== -->
+  <section id="tab-monthly" class="tab-content">
+    <div class="card">
+      <h2 class="section-title">月次一覧</h2>
+      <div id="monthly-list" class="monthly-list"></div>
+    </div>
+    <div class="action-bar">
+      <button id="export-pdf-btn" class="primary-btn">PDF出力</button>
+    </div>
+  </section>
+
+  <!-- ===== 設定タブ ===== -->
+  <section id="tab-settings" class="tab-content">
+    <div class="card">
+      <h2 class="section-title">基本設定</h2>
+      <div class="form-group">
+        <label>名前</label>
+        <input type="text" id="setting-name" placeholder="氏名を入力">
+      </div>
+      <div class="form-group">
+        <label>車両 No.</label>
+        <input type="text" id="setting-vehicle" placeholder="車両番号を入力">
+      </div>
+      <div class="form-group">
+        <label>デフォルト点呼執行者</label>
+        <input type="text" id="setting-inspector" placeholder="点呼執行者名（任意）">
+      </div>
+      <button id="save-settings-btn" class="primary-btn">設定を保存</button>
+    </div>
+    <div class="card">
+      <h2 class="section-title">データ管理</h2>
+      <button id="export-data-btn" class="secondary-btn">データをバックアップ</button>
+      <input type="file" id="import-data-input" accept=".json" style="display:none">
+      <button id="import-data-btn" class="secondary-btn">データを復元</button>
+      <button id="clear-data-btn" class="danger-btn">全データ削除</button>
+    </div>
+  </section>
+
+  <!-- トースト通知 -->
+  <div id="toast" class="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
