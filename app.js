@@ -434,16 +434,19 @@ if ('serviceWorker' in navigator) {
       + exampleRow
       + rows
       + '</tbody></table>'
-      + '<script>window.onload=function(){window.print();}<\/script>'
       + '</body></html>';
 
-    var w = window.open('', '_blank');
-    if (w) {
-      w.document.write(html);
-      w.document.close();
-    } else {
-      showToast('ポップアップがブロックされました。許可してください。');
-    }
+    var blob = new Blob([html], { type: 'text/html' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+    showToast('帳票を開いています...');
   }
 
   // --- タブ切り替え ---
