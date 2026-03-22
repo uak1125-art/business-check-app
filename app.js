@@ -373,11 +373,11 @@ if ('serviceWorker' in navigator) {
     var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
       + '<title>業務記録・点呼記録簿</title>'
       + '<style>'
-      + '@page { size: landscape; margin: 5mm; }'
-      + '@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }'
+      + '@page { size: landscape; margin: 0; }'
+      + '@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 3mm; } }'
       + 'body { font-family: "Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif; font-size: 5.5pt; margin: 0; }'
-      + 'h1 { font-size: 11pt; text-align: center; margin: 2px 0; }'
-      + '.info { display: flex; justify-content: space-between; margin: 2px 10px 3px; font-size: 8pt; }'
+      + 'h1 { font-size: 11pt; text-align: center; margin: 1px 0; }'
+      + '.info { display: flex; justify-content: space-between; margin: 1px 10px 2px; font-size: 8pt; }'
       + 'table { width: 100%; border-collapse: collapse; table-layout: fixed; }'
       + 'th, td { border: 1px solid #333; padding: 1px 2px; text-align: center; vertical-align: middle; word-break: break-all; line-height: 1.1; }'
       + 'th { background: #e8e8e8; font-size: 5.5pt; font-weight: bold; }'
@@ -442,12 +442,12 @@ if ('serviceWorker' in navigator) {
     // 帳票HTMLをBlobに保存してページ遷移
     // 戻るボタン付きのツールバーをHTMLに追加
     var printHtml = html.replace('</body>',
-      '<div class="no-print" style="position:fixed;top:0;left:0;right:0;display:flex;gap:8px;padding:8px 12px;background:#1a73e8;z-index:9999;">'
-      + '<button onclick="history.back()" style="padding:8px 16px;border:none;border-radius:6px;background:white;color:#1a73e8;font-size:14px;font-weight:bold;cursor:pointer;">← 戻る</button>'
-      + '<button onclick="window.print()" style="padding:8px 16px;border:none;border-radius:6px;background:rgba(255,255,255,0.2);color:white;font-size:14px;font-weight:bold;cursor:pointer;flex:1;">印刷 / PDF保存</button>'
+      '<div class="no-print" style="position:fixed;top:0;left:0;right:0;display:flex;gap:10px;padding:12px 16px;background:#1a73e8;z-index:9999;">'
+      + '<button onclick="history.back()" style="padding:14px 20px;border:none;border-radius:8px;background:white;color:#1a73e8;font-size:16px;font-weight:bold;cursor:pointer;min-width:80px;">← 戻る</button>'
+      + '<button onclick="window.print()" style="padding:14px 20px;border:none;border-radius:8px;background:rgba(255,255,255,0.25);color:white;font-size:16px;font-weight:bold;cursor:pointer;flex:1;">印刷 / PDF保存</button>'
       + '</div>'
       + '<style>.no-print{} @media print{.no-print{display:none !important;}}</style>'
-      + '<style>body{padding-top:50px;} @media print{body{padding-top:0;}}</style>'
+      + '<style>body{padding-top:60px;} @media print{body{padding-top:0;}}</style>'
       + '</body>');
 
     var blob = new Blob([printHtml], { type: 'text/html' });
