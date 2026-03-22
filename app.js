@@ -436,17 +436,40 @@ if ('serviceWorker' in navigator) {
       + '</tbody></table>'
       + '</body></html>';
 
-    var blob = new Blob([html], { type: 'text/html' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
-    showToast('帳票を開いています...');
+    // 全画面オーバーレイで帳票を表示
+    var overlay = document.createElement('div');
+    overlay.id = 'print-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:#fff;display:flex;flex-direction:column;';
+
+    var toolbar = document.createElement('div');
+    toolbar.style.cssText = 'display:flex;gap:8px;padding:8px 12px;background:#1a73e8;flex-shrink:0;';
+
+    var backBtn = document.createElement('button');
+    backBtn.textContent = '← 戻る';
+    backBtn.style.cssText = 'padding:8px 16px;border:none;border-radius:6px;background:white;color:#1a73e8;font-size:14px;font-weight:bold;cursor:pointer;';
+    backBtn.onclick = function () { document.body.removeChild(overlay); };
+
+    var printBtn = document.createElement('button');
+    printBtn.textContent = '印刷 / PDF保存';
+    printBtn.style.cssText = 'padding:8px 16px;border:none;border-radius:6px;background:#fff3;color:white;font-size:14px;font-weight:bold;cursor:pointer;flex:1;';
+    printBtn.onclick = function () {
+      var frame = document.getElementById('print-frame');
+      if (frame && frame.contentWindow) { frame.contentWindow.print(); }
+    };
+
+    toolbar.appendChild(backBtn);
+    toolbar.appendChild(printBtn);
+    overlay.appendChild(toolbar);
+
+    var iframe = document.createElement('iframe');
+    iframe.id = 'print-frame';
+    iframe.style.cssText = 'flex:1;border:none;width:100%;';
+    overlay.appendChild(iframe);
+
+    document.body.appendChild(overlay);
+    iframe.contentDocument.open();
+    iframe.contentDocument.write(html);
+    iframe.contentDocument.close();
   }
 
   // --- タブ切り替え ---
