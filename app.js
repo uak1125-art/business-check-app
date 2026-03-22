@@ -11,7 +11,7 @@ if ('serviceWorker' in navigator) {
   // --- ストレージキー ---
   const STORAGE_KEY = 'mkt-check-records';
   const SETTINGS_KEY = 'mkt-check-settings';
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbwTbfHg2wLK78GiBI6HbZ9xNbRclwaVILxFbLNO_tJa7o5rrPT7kvs_lyP8I4i7FgURfQ/exec';
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbzcj4L17kL61TuzqWZzN89O8vt7syLVTYUdBTxtLG0CahYeCgXjou_cLcaUxIxjTVyl/exec';
 
   // --- 状態管理 ---
   let state = {
