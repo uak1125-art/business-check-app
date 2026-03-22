@@ -18,7 +18,7 @@ if ('serviceWorker' in navigator) {
     month: 4,
     day: 1,
     records: {},   // { "7-4-1": { ...record }, ... }
-    settings: { name: '', vehicle: '', inspector: '' }
+    settings: { name: '', vehicle: '', inspector: '', gasUrl: '' }
   };
 
   // --- 初期化 ---
@@ -86,12 +86,14 @@ if ('serviceWorker' in navigator) {
     document.getElementById('setting-name').value = state.settings.name || '';
     document.getElementById('setting-vehicle').value = state.settings.vehicle || '';
     document.getElementById('setting-inspector').value = state.settings.inspector || '';
+    document.getElementById('setting-gas-url').value = state.settings.gasUrl || '';
   }
 
   function saveSettings() {
     state.settings.name = document.getElementById('setting-name').value.trim();
     state.settings.vehicle = document.getElementById('setting-vehicle').value.trim();
     state.settings.inspector = document.getElementById('setting-inspector').value.trim();
+    state.settings.gasUrl = document.getElementById('setting-gas-url').value.trim();
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
     updateDisplayInfo();
     showToast('設定を保存しました');
@@ -254,6 +256,46 @@ if ('serviceWorker' in navigator) {
     }
   }
 
+  // --- スプレッドシート送信 ---
+  function sendToGAS(formData) {
+    var gasUrl = state.settings.gasUrl;
+    if (!gasUrl) return;
+
+    var payload = {
+      name: state.settings.name,
+      vehicle: state.settings.vehicle,
+      year: state.year,
+      month: state.month,
+      day: state.day,
+      beforeTime: formData.beforeTime,
+      beforeDistance: formData.beforeDistance,
+      deliveryArea: formData.deliveryArea,
+      beforeAlcohol: formData.beforeAlcohol,
+      beforeDrinking: formData.beforeDrinking,
+      beforeHealth: formData.beforeHealth,
+      beforeInspection: formData.beforeInspection,
+      beforeInspector: formData.beforeInspector,
+      beforeNote: formData.beforeNote,
+      afterTime: formData.afterTime,
+      afterDistance: formData.afterDistance,
+      afterAlcohol: formData.afterAlcohol,
+      afterDrinking: formData.afterDrinking,
+      afterHealth: formData.afterHealth,
+      afterVehicle: formData.afterVehicle,
+      afterInspector: formData.afterInspector,
+      afterNote: formData.afterNote
+    };
+
+    fetch(gasUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    }).catch(function (err) {
+      console.error('GAS送信エラー:', err);
+    });
+  }
+
   // --- 保存 ---
   function saveDay() {
     const key = recordKey(state.year, state.month, state.day);
@@ -267,6 +309,7 @@ if ('serviceWorker' in navigator) {
 
     state.records[key] = data;
     saveRecords();
+    sendToGAS(data);
     renderDayGrid();
     updateMonthlyList();
     showToast(state.day + '日のデータを保存しました');
