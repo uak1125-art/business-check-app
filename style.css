@@ -470,6 +470,30 @@ body {
   opacity: 1;
 }
 
+/* ===== 未入力警告 ===== */
+.missing-banner {
+  background: #fce8e6;
+  color: #c5221f;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: center;
+  border: 1px solid #f5c6cb;
+}
+
+.day-cell.missing {
+  background: #fce8e6;
+  color: #c5221f;
+  font-weight: 600;
+}
+
+.day-cell.missing.selected {
+  background: #d93025;
+  color: white;
+}
+
 /* ===== レスポンシブ ===== */
 @media (min-width: 600px) {
   .tab-content {

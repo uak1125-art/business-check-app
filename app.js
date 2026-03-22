@@ -106,11 +106,29 @@ if ('serviceWorker' in navigator) {
     vehicleEl.textContent = state.settings.vehicle ? '車両No: ' + state.settings.vehicle : '';
   }
 
+  // --- 今日の日付を取得 ---
+  function getTodayDay() {
+    var now = new Date();
+    var todayYear = now.getFullYear() - 2018;
+    var todayMonth = now.getMonth() + 1;
+    if (todayYear === state.year && todayMonth === state.month) {
+      return now.getDate();
+    }
+    // 過去の月を表示中なら月末まで全部チェック対象
+    if (todayYear > state.year || (todayYear === state.year && todayMonth > state.month)) {
+      return getDaysInMonth(state.year, state.month);
+    }
+    // 未来の月なら未入力チェック不要
+    return 0;
+  }
+
   // --- 日付グリッド描画 ---
   function renderDayGrid() {
     const grid = document.getElementById('day-grid');
     grid.innerHTML = '';
     const daysInMonth = getDaysInMonth(state.year, state.month);
+    var today = getTodayDay();
+    var missingDays = [];
 
     for (let d = 1; d <= daysInMonth; d++) {
       const btn = document.createElement('button');
@@ -124,7 +142,13 @@ if ('serviceWorker' in navigator) {
       if (d === state.day) btn.classList.add('selected');
 
       const key = recordKey(state.year, state.month, d);
-      if (state.records[key]) btn.classList.add('has-data');
+      if (state.records[key]) {
+        btn.classList.add('has-data');
+      } else if (d < today) {
+        // 過去の日で未入力 → 警告表示
+        btn.classList.add('missing');
+        missingDays.push(d);
+      }
 
       btn.addEventListener('click', function () {
         state.day = d;
@@ -134,6 +158,21 @@ if ('serviceWorker' in navigator) {
       });
 
       grid.appendChild(btn);
+    }
+
+    // 未入力バナーの更新
+    updateMissingBanner(missingDays);
+  }
+
+  // --- 未入力警告バナー ---
+  function updateMissingBanner(missingDays) {
+    var banner = document.getElementById('missing-banner');
+    var text = document.getElementById('missing-text');
+    if (missingDays.length > 0) {
+      text.textContent = '未記入: ' + missingDays.length + '日分 (' + missingDays.join(', ') + '日)';
+      banner.style.display = 'block';
+    } else {
+      banner.style.display = 'none';
     }
   }
 
