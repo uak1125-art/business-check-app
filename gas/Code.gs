@@ -24,20 +24,27 @@ var HEADERS = [
 
 function doPost(e) {
   try {
-    var sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getActiveSheet();
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     var data = JSON.parse(e.postData.contents);
 
-    // ヘッダーが未設定なら自動追加
+    // ドライバー名でシートを取得（なければ自動作成）
+    var driverName = data.name || '名前未設定';
+    var sheet = ss.getSheetByName(driverName);
+    if (!sheet) {
+      sheet = ss.insertSheet(driverName);
+      sheet.appendRow(HEADERS);
+    }
+
+    // ヘッダーが未設定なら追加
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(HEADERS);
     }
 
-    // 既存行を検索（名前 + 年 + 月 + 日 が一致する行を更新）
+    // 既存行を検索（年 + 月 + 日 が一致する行を更新）
     var rows = sheet.getDataRange().getValues();
     var targetRow = -1;
     for (var i = 1; i < rows.length; i++) {
-      if (rows[i][1] === data.name &&
-          String(rows[i][3]) === String(data.year) &&
+      if (String(rows[i][3]) === String(data.year) &&
           String(rows[i][4]) === String(data.month) &&
           String(rows[i][5]) === String(data.day)) {
         targetRow = i + 1;
