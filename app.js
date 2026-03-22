@@ -320,8 +320,8 @@ if ('serviceWorker' in navigator) {
       + '<td>例</td><td></td>'
       + '<td>8:30</td><td>98,000</td><td>久留米市</td>'
       + '<td>有</td><td>無</td><td>良好</td><td>異常無</td><td>印</td><td></td>'
-      + '<td>20:30</td><td>98,060</td><td>60</td>'
-      + '<td>有</td><td>無</td><td>良好</td><td>異常無</td><td>印</td><td>オイル交換</td>'
+      + '<td class="after-cell">20:30</td><td class="after-cell">98,060</td><td class="after-cell">60</td>'
+      + '<td class="after-cell">有</td><td class="after-cell">無</td><td class="after-cell">良好</td><td class="after-cell">異常無</td><td class="after-cell">印</td><td class="after-cell">オイル交換</td>'
       + '</tr>';
 
     // データ行を生成
@@ -350,22 +350,22 @@ if ('serviceWorker' in navigator) {
           + '<td>' + (rec.beforeInspection || '') + '</td>'
           + '<td>' + (rec.beforeInspector || '') + '</td>'
           + '<td>' + (rec.beforeNote || '') + '</td>'
-          + '<td>' + (rec.afterTime || '') + '</td>'
-          + '<td>' + (rec.afterDistance ? Number(rec.afterDistance).toLocaleString() : '') + '</td>'
-          + '<td>' + daily + '</td>'
-          + '<td>' + (rec.afterAlcohol || '') + '</td>'
-          + '<td>' + (rec.afterDrinking || '') + '</td>'
-          + '<td>' + (rec.afterHealth || '') + '</td>'
-          + '<td>' + (rec.afterVehicle || '') + '</td>'
-          + '<td>' + (rec.afterInspector || '') + '</td>'
-          + '<td>' + (rec.afterNote || '') + '</td>'
+          + '<td class="after-cell">' + (rec.afterTime || '') + '</td>'
+          + '<td class="after-cell">' + (rec.afterDistance ? Number(rec.afterDistance).toLocaleString() : '') + '</td>'
+          + '<td class="after-cell">' + daily + '</td>'
+          + '<td class="after-cell">' + (rec.afterAlcohol || '') + '</td>'
+          + '<td class="after-cell">' + (rec.afterDrinking || '') + '</td>'
+          + '<td class="after-cell">' + (rec.afterHealth || '') + '</td>'
+          + '<td class="after-cell">' + (rec.afterVehicle || '') + '</td>'
+          + '<td class="after-cell">' + (rec.afterInspector || '') + '</td>'
+          + '<td class="after-cell">' + (rec.afterNote || '') + '</td>'
           + '</tr>';
       } else {
         rows += '<tr>'
           + '<td' + dayStyle + '>' + d + '</td>'
           + '<td' + dayStyle + '>' + wdName + '</td>'
           + '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>'
-          + '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>'
+          + '<td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td>'
           + '</tr>';
       }
     }
@@ -373,7 +373,8 @@ if ('serviceWorker' in navigator) {
     var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
       + '<title>業務記録・点呼記録簿</title>'
       + '<style>'
-      + '@page { size: A4 landscape; margin: 5mm; }'
+      + '@page { size: landscape; margin: 5mm; }'
+      + '@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }'
       + 'body { font-family: "Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif; font-size: 5.5pt; margin: 0; }'
       + 'h1 { font-size: 11pt; text-align: center; margin: 2px 0; }'
       + '.info { display: flex; justify-content: space-between; margin: 2px 10px 3px; font-size: 8pt; }'
@@ -383,6 +384,7 @@ if ('serviceWorker' in navigator) {
       + '.grp-before { background: #dce8f7; }'
       + '.grp-after { background: #fde8d0; }'
       + 'td { font-size: 5.5pt; height: 13px; }'
+      + 'td.after-cell { background: #fff5ee; }'
       + 'col.day { width: 18px; } col.wd { width: 14px; }'
       + 'col.time { width: 30px; } col.dist { width: 38px; }'
       + 'col.area { width: 46px; } col.yn { width: 16px; }'
