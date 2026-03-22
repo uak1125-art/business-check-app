@@ -18,7 +18,7 @@ if ('serviceWorker' in navigator) {
     month: 4,
     day: 1,
     records: {},   // { "7-4-1": { ...record }, ... }
-    settings: { name: '', vehicle: '', inspector: '', gasUrl: 'https://script.google.com/macros/s/AKfycbzaEkeTQ_oTHgKs8ZRNqxL_N3QHotxGuWucxkHFGOXqNOzMtDPJU8LFCuJaJQkDFMrn/exec' }
+    settings: { name: '', vehicle: '', inspector: '', gasUrl: 'https://script.google.com/macros/s/AKfycbwTbfHg2wLK78GiBI6HbZ9xNbRclwaVILxFbLNO_tJa7o5rrPT7kvs_lyP8I4i7FgURfQ/exec' }
   };
 
   // --- 初期化 ---
