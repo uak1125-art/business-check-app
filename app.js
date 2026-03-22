@@ -316,10 +316,10 @@ if ('serviceWorker' in navigator) {
     var vehicle = state.settings.vehicle || '';
 
     // 記入例行
-    var exampleRow = '<tr style="background:#f0f7ff">'
+    var exampleRow = '<tr>'
       + '<td>例</td><td></td>'
-      + '<td>8:30</td><td>98,000</td><td>久留米市</td>'
-      + '<td>有</td><td>無</td><td>良好</td><td>異常無</td><td>印</td><td></td>'
+      + '<td class="before-cell">8:30</td><td class="before-cell">98,000</td><td class="before-cell">久留米市</td>'
+      + '<td class="before-cell">有</td><td class="before-cell">無</td><td class="before-cell">良好</td><td class="before-cell">異常無</td><td class="before-cell">印</td><td class="before-cell"></td>'
       + '<td class="after-cell">20:30</td><td class="after-cell">98,060</td><td class="after-cell">60</td>'
       + '<td class="after-cell">有</td><td class="after-cell">無</td><td class="after-cell">良好</td><td class="after-cell">異常無</td><td class="after-cell">印</td><td class="after-cell">オイル交換</td>'
       + '</tr>';
@@ -341,15 +341,15 @@ if ('serviceWorker' in navigator) {
         rows += '<tr>'
           + '<td' + dayStyle + '>' + d + '</td>'
           + '<td' + dayStyle + '>' + wdName + '</td>'
-          + '<td>' + (rec.beforeTime || '') + '</td>'
-          + '<td>' + (rec.beforeDistance ? Number(rec.beforeDistance).toLocaleString() : '') + '</td>'
-          + '<td>' + (rec.deliveryArea || '') + '</td>'
-          + '<td>' + (rec.beforeAlcohol || '') + '</td>'
-          + '<td>' + (rec.beforeDrinking || '') + '</td>'
-          + '<td>' + (rec.beforeHealth || '') + '</td>'
-          + '<td>' + (rec.beforeInspection || '') + '</td>'
-          + '<td>' + (rec.beforeInspector || '') + '</td>'
-          + '<td>' + (rec.beforeNote || '') + '</td>'
+          + '<td class="before-cell">' + (rec.beforeTime || '') + '</td>'
+          + '<td class="before-cell">' + (rec.beforeDistance ? Number(rec.beforeDistance).toLocaleString() : '') + '</td>'
+          + '<td class="before-cell">' + (rec.deliveryArea || '') + '</td>'
+          + '<td class="before-cell">' + (rec.beforeAlcohol || '') + '</td>'
+          + '<td class="before-cell">' + (rec.beforeDrinking || '') + '</td>'
+          + '<td class="before-cell">' + (rec.beforeHealth || '') + '</td>'
+          + '<td class="before-cell">' + (rec.beforeInspection || '') + '</td>'
+          + '<td class="before-cell">' + (rec.beforeInspector || '') + '</td>'
+          + '<td class="before-cell">' + (rec.beforeNote || '') + '</td>'
           + '<td class="after-cell">' + (rec.afterTime || '') + '</td>'
           + '<td class="after-cell">' + (rec.afterDistance ? Number(rec.afterDistance).toLocaleString() : '') + '</td>'
           + '<td class="after-cell">' + daily + '</td>'
@@ -364,7 +364,7 @@ if ('serviceWorker' in navigator) {
         rows += '<tr>'
           + '<td' + dayStyle + '>' + d + '</td>'
           + '<td' + dayStyle + '>' + wdName + '</td>'
-          + '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>'
+          + '<td class="before-cell"></td><td class="before-cell"></td><td class="before-cell"></td><td class="before-cell"></td><td class="before-cell"></td><td class="before-cell"></td><td class="before-cell"></td><td class="before-cell"></td><td class="before-cell"></td>'
           + '<td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td><td class="after-cell"></td>'
           + '</tr>';
       }
@@ -384,7 +384,8 @@ if ('serviceWorker' in navigator) {
       + '.grp-before { background: #dce8f7; }'
       + '.grp-after { background: #fde8d0; }'
       + 'td { font-size: 5.5pt; height: 13px; }'
-      + 'td.after-cell { background: #fff5ee; }'
+      + 'td.before-cell { background: #dce8f7; }'
+      + 'td.after-cell { background: #fde8d0; }'
       + 'col.day { width: 18px; } col.wd { width: 14px; }'
       + 'col.time { width: 30px; } col.dist { width: 38px; }'
       + 'col.area { width: 46px; } col.yn { width: 16px; }'
@@ -438,40 +439,20 @@ if ('serviceWorker' in navigator) {
       + '</tbody></table>'
       + '</body></html>';
 
-    // 全画面オーバーレイで帳票を表示
-    var overlay = document.createElement('div');
-    overlay.id = 'print-overlay';
-    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:#fff;display:flex;flex-direction:column;';
+    // 帳票HTMLをBlobに保存してページ遷移
+    // 戻るボタン付きのツールバーをHTMLに追加
+    var printHtml = html.replace('</body>',
+      '<div class="no-print" style="position:fixed;top:0;left:0;right:0;display:flex;gap:8px;padding:8px 12px;background:#1a73e8;z-index:9999;">'
+      + '<button onclick="history.back()" style="padding:8px 16px;border:none;border-radius:6px;background:white;color:#1a73e8;font-size:14px;font-weight:bold;cursor:pointer;">← 戻る</button>'
+      + '<button onclick="window.print()" style="padding:8px 16px;border:none;border-radius:6px;background:rgba(255,255,255,0.2);color:white;font-size:14px;font-weight:bold;cursor:pointer;flex:1;">印刷 / PDF保存</button>'
+      + '</div>'
+      + '<style>.no-print{} @media print{.no-print{display:none !important;}}</style>'
+      + '<style>body{padding-top:50px;} @media print{body{padding-top:0;}}</style>'
+      + '</body>');
 
-    var toolbar = document.createElement('div');
-    toolbar.style.cssText = 'display:flex;gap:8px;padding:8px 12px;background:#1a73e8;flex-shrink:0;';
-
-    var backBtn = document.createElement('button');
-    backBtn.textContent = '← 戻る';
-    backBtn.style.cssText = 'padding:8px 16px;border:none;border-radius:6px;background:white;color:#1a73e8;font-size:14px;font-weight:bold;cursor:pointer;';
-    backBtn.onclick = function () { document.body.removeChild(overlay); };
-
-    var printBtn = document.createElement('button');
-    printBtn.textContent = '印刷 / PDF保存';
-    printBtn.style.cssText = 'padding:8px 16px;border:none;border-radius:6px;background:#fff3;color:white;font-size:14px;font-weight:bold;cursor:pointer;flex:1;';
-    printBtn.onclick = function () {
-      var frame = document.getElementById('print-frame');
-      if (frame && frame.contentWindow) { frame.contentWindow.print(); }
-    };
-
-    toolbar.appendChild(backBtn);
-    toolbar.appendChild(printBtn);
-    overlay.appendChild(toolbar);
-
-    var iframe = document.createElement('iframe');
-    iframe.id = 'print-frame';
-    iframe.style.cssText = 'flex:1;border:none;width:100%;';
-    overlay.appendChild(iframe);
-
-    document.body.appendChild(overlay);
-    iframe.contentDocument.open();
-    iframe.contentDocument.write(html);
-    iframe.contentDocument.close();
+    var blob = new Blob([printHtml], { type: 'text/html' });
+    var url = URL.createObjectURL(blob);
+    location.href = url;
   }
 
   // --- タブ切り替え ---
