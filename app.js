@@ -11,6 +11,7 @@ if ('serviceWorker' in navigator) {
   // --- ストレージキー ---
   const STORAGE_KEY = 'mkt-check-records';
   const SETTINGS_KEY = 'mkt-check-settings';
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbwTbfHg2wLK78GiBI6HbZ9xNbRclwaVILxFbLNO_tJa7o5rrPT7kvs_lyP8I4i7FgURfQ/exec';
 
   // --- 状態管理 ---
   let state = {
@@ -18,7 +19,7 @@ if ('serviceWorker' in navigator) {
     month: 4,
     day: 1,
     records: {},   // { "7-4-1": { ...record }, ... }
-    settings: { name: '', vehicle: '', inspector: '', gasUrl: 'https://script.google.com/macros/s/AKfycbwTbfHg2wLK78GiBI6HbZ9xNbRclwaVILxFbLNO_tJa7o5rrPT7kvs_lyP8I4i7FgURfQ/exec' }
+    settings: { name: '', vehicle: '', inspector: '' }
   };
 
   // --- 初期化 ---
@@ -86,14 +87,13 @@ if ('serviceWorker' in navigator) {
     document.getElementById('setting-name').value = state.settings.name || '';
     document.getElementById('setting-vehicle').value = state.settings.vehicle || '';
     document.getElementById('setting-inspector').value = state.settings.inspector || '';
-    document.getElementById('setting-gas-url').value = state.settings.gasUrl || '';
+    document.getElementById('setting-gas-url').value = '';
   }
 
   function saveSettings() {
     state.settings.name = document.getElementById('setting-name').value.trim();
     state.settings.vehicle = document.getElementById('setting-vehicle').value.trim();
     state.settings.inspector = document.getElementById('setting-inspector').value.trim();
-    state.settings.gasUrl = document.getElementById('setting-gas-url').value.trim();
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
     updateDisplayInfo();
     showToast('設定を保存しました');
@@ -297,7 +297,7 @@ if ('serviceWorker' in navigator) {
 
   // --- スプレッドシート送信 ---
   function sendToGAS(formData) {
-    var gasUrl = state.settings.gasUrl;
+    var gasUrl = GAS_URL;
     if (!gasUrl) return;
 
     var payload = {
