@@ -309,75 +309,141 @@ if ('serviceWorker' in navigator) {
     }
   }
 
-  // --- PDF出力 ---
+  // --- PDF出力（印刷ベース） ---
   function exportPDF() {
-    var jsPDF = window.jspdf.jsPDF;
-    var doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-
-    // 日本語フォントがないため、基本的なラテン文字+数字で構成
-    // ヘッダー情報
-    var title = 'Business Record / Roll Call Record (MKT)';
-    var period = 'Reiwa ' + state.year + ' / ' + state.month;
-    var name = state.settings.name || '---';
-    var vehicle = state.settings.vehicle || '---';
-
-    doc.setFontSize(14);
-    doc.text(title, 14, 15);
-    doc.setFontSize(10);
-    doc.text(period + '   Name: ' + name + '   Vehicle: ' + vehicle, 14, 22);
-
-    // テーブルデータ
-    var headers = [
-      ['Day', 'Start\nTime', 'Start\nDist(km)', 'Area', 'Alc\nUse', 'Drunk', 'Health', 'Inspect', 'Inspector', 'Note',
-        'End\nTime', 'End\nDist(km)', 'Daily\n(km)', 'Alc\nUse', 'Drunk', 'Health', 'Vehicle', 'Inspector', 'Note']
-    ];
-
-    var body = [];
     var daysInMonth = getDaysInMonth(state.year, state.month);
+    var name = state.settings.name || '';
+    var vehicle = state.settings.vehicle || '';
 
+    // 記入例行
+    var exampleRow = '<tr style="background:#f0f7ff">'
+      + '<td>例</td><td></td>'
+      + '<td>8:30</td><td>98,000</td><td>久留米市</td>'
+      + '<td>有</td><td>無</td><td>良好</td><td>異常無</td><td>印</td><td></td>'
+      + '<td>20:30</td><td>98,060</td><td>60</td>'
+      + '<td>有</td><td>無</td><td>良好</td><td>異常無</td><td>印</td><td>オイル交換</td>'
+      + '</tr>';
+
+    // データ行を生成
+    var rows = '';
     for (var d = 1; d <= daysInMonth; d++) {
       var key = recordKey(state.year, state.month, d);
       var rec = state.records[key];
-      var wd = WEEKDAYS[getWeekday(state.year, state.month, d)];
+      var wd = getWeekday(state.year, state.month, d);
+      var wdName = WEEKDAYS[wd];
+      var dayStyle = wd === 0 ? ' style="color:red"' : wd === 6 ? ' style="color:blue"' : '';
 
       if (rec) {
         var bDist = parseInt(rec.beforeDistance) || 0;
         var aDist = parseInt(rec.afterDistance) || 0;
         var daily = (bDist > 0 && aDist > 0) ? (aDist - bDist) : '';
 
-        body.push([
-          d + '(' + wd + ')',
-          rec.beforeTime || '', rec.beforeDistance || '', rec.deliveryArea || '',
-          rec.beforeAlcohol || '', rec.beforeDrinking || '',
-          rec.beforeHealth || '', rec.beforeInspection || '',
-          rec.beforeInspector || '', rec.beforeNote || '',
-          rec.afterTime || '', rec.afterDistance || '', daily,
-          rec.afterAlcohol || '', rec.afterDrinking || '',
-          rec.afterHealth || '', rec.afterVehicle || '',
-          rec.afterInspector || '', rec.afterNote || ''
-        ]);
+        rows += '<tr>'
+          + '<td' + dayStyle + '>' + d + '</td>'
+          + '<td' + dayStyle + '>' + wdName + '</td>'
+          + '<td>' + (rec.beforeTime || '') + '</td>'
+          + '<td>' + (rec.beforeDistance ? Number(rec.beforeDistance).toLocaleString() : '') + '</td>'
+          + '<td>' + (rec.deliveryArea || '') + '</td>'
+          + '<td>' + (rec.beforeAlcohol || '') + '</td>'
+          + '<td>' + (rec.beforeDrinking || '') + '</td>'
+          + '<td>' + (rec.beforeHealth || '') + '</td>'
+          + '<td>' + (rec.beforeInspection || '') + '</td>'
+          + '<td>' + (rec.beforeInspector || '') + '</td>'
+          + '<td>' + (rec.beforeNote || '') + '</td>'
+          + '<td>' + (rec.afterTime || '') + '</td>'
+          + '<td>' + (rec.afterDistance ? Number(rec.afterDistance).toLocaleString() : '') + '</td>'
+          + '<td>' + daily + '</td>'
+          + '<td>' + (rec.afterAlcohol || '') + '</td>'
+          + '<td>' + (rec.afterDrinking || '') + '</td>'
+          + '<td>' + (rec.afterHealth || '') + '</td>'
+          + '<td>' + (rec.afterVehicle || '') + '</td>'
+          + '<td>' + (rec.afterInspector || '') + '</td>'
+          + '<td>' + (rec.afterNote || '') + '</td>'
+          + '</tr>';
       } else {
-        body.push([d + '(' + wd + ')', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        rows += '<tr>'
+          + '<td' + dayStyle + '>' + d + '</td>'
+          + '<td' + dayStyle + '>' + wdName + '</td>'
+          + '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>'
+          + '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>'
+          + '</tr>';
       }
     }
 
-    doc.autoTable({
-      head: headers,
-      body: body,
-      startY: 26,
-      styles: { fontSize: 6, cellPadding: 1.5, lineWidth: 0.1 },
-      headStyles: { fillColor: [26, 115, 232], fontSize: 5.5, halign: 'center' },
-      columnStyles: {
-        0: { cellWidth: 14 },
-        3: { cellWidth: 20 }
-      },
-      theme: 'grid',
-      margin: { left: 5, right: 5 }
-    });
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+      + '<title>業務記録・点呼記録簿</title>'
+      + '<style>'
+      + '@page { size: A4 landscape; margin: 8mm; }'
+      + 'body { font-family: "Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif; font-size: 7pt; margin: 0; }'
+      + 'h1 { font-size: 14pt; text-align: center; margin: 4px 0; }'
+      + '.info { display: flex; justify-content: space-between; margin: 4px 10px 6px; font-size: 10pt; }'
+      + 'table { width: 100%; border-collapse: collapse; table-layout: fixed; }'
+      + 'th, td { border: 1px solid #333; padding: 2px 3px; text-align: center; vertical-align: middle; word-break: break-all; }'
+      + 'th { background: #e8e8e8; font-size: 6.5pt; font-weight: bold; }'
+      + '.grp-before { background: #dce8f7; }'
+      + '.grp-after { background: #fde8d0; }'
+      + 'td { font-size: 7pt; height: 18px; }'
+      + 'col.day { width: 22px; } col.wd { width: 18px; }'
+      + 'col.time { width: 34px; } col.dist { width: 42px; }'
+      + 'col.area { width: 52px; } col.yn { width: 20px; }'
+      + 'col.status { width: 30px; } col.person { width: 28px; }'
+      + 'col.note { width: 44px; } col.daily { width: 30px; }'
+      + '</style></head><body>'
+      + '<h1>【業務記録・点呼記録簿】(MKT)</h1>'
+      + '<div class="info">'
+      + '<span>令和 ' + state.year + ' 年 ' + state.month + ' 月度</span>'
+      + '<span>名前: ' + name + '</span>'
+      + '<span>車両No: ' + vehicle + '</span>'
+      + '</div>'
+      + '<table>'
+      + '<colgroup>'
+      + '<col class="day"><col class="wd">'
+      + '<col class="time"><col class="dist"><col class="area">'
+      + '<col class="yn"><col class="yn"><col class="status"><col class="status"><col class="person"><col class="note">'
+      + '<col class="time"><col class="dist"><col class="daily">'
+      + '<col class="yn"><col class="yn"><col class="status"><col class="status"><col class="person"><col class="note">'
+      + '</colgroup>'
+      + '<thead>'
+      + '<tr>'
+      + '<th rowspan="2">日</th><th rowspan="2">曜</th>'
+      + '<th colspan="9" class="grp-before">乗務前 自主点呼</th>'
+      + '<th colspan="9" class="grp-after">乗務後 自主点呼</th>'
+      + '</tr>'
+      + '<tr>'
+      + '<th class="grp-before">時間</th>'
+      + '<th class="grp-before">開始走行<br>距離(km)</th>'
+      + '<th class="grp-before">配達<br>エリア</th>'
+      + '<th class="grp-before">アルコール<br>検知器</th>'
+      + '<th class="grp-before">酒気<br>帯び</th>'
+      + '<th class="grp-before">疾病・<br>疲労等</th>'
+      + '<th class="grp-before">日常<br>点検</th>'
+      + '<th class="grp-before">点呼<br>執行者</th>'
+      + '<th class="grp-before">備考</th>'
+      + '<th class="grp-after">時間</th>'
+      + '<th class="grp-after">修了走行<br>距離(km)</th>'
+      + '<th class="grp-after">1日の<br>走行距離</th>'
+      + '<th class="grp-after">アルコール<br>検知器</th>'
+      + '<th class="grp-after">酒気<br>帯び</th>'
+      + '<th class="grp-after">疾病・<br>疲労等</th>'
+      + '<th class="grp-after">車両の<br>異常</th>'
+      + '<th class="grp-after">点呼<br>執行者</th>'
+      + '<th class="grp-after">備考</th>'
+      + '</tr>'
+      + '</thead>'
+      + '<tbody>'
+      + exampleRow
+      + rows
+      + '</tbody></table>'
+      + '<script>window.onload=function(){window.print();}<\/script>'
+      + '</body></html>';
 
-    var fileName = 'record_R' + state.year + '_' + state.month + '.pdf';
-    doc.save(fileName);
-    showToast('PDFを出力しました');
+    var w = window.open('', '_blank');
+    if (w) {
+      w.document.write(html);
+      w.document.close();
+    } else {
+      showToast('ポップアップがブロックされました。許可してください。');
+    }
   }
 
   // --- タブ切り替え ---

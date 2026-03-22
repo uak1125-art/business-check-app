@@ -1,5 +1,5 @@
 // Service Worker — 業務記録・点呼記録簿 PWA
-var CACHE_NAME = 'mkt-check-v1';
+var CACHE_NAME = 'mkt-check-v2';
 var URLS_TO_CACHE = [
   './',
   './index.html',
@@ -7,9 +7,7 @@ var URLS_TO_CACHE = [
   './app.js',
   './manifest.json',
   './icons/icon-192.png',
-  './icons/icon-512.png',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'
+  './icons/icon-512.png'
 ];
 
 // インストール時にキャッシュ
