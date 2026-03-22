@@ -1,3 +1,8 @@
+// ===== Service Worker 登録 =====
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(function () {});
+}
+
 // ===== 業務記録・点呼記録簿 アプリ =====
 
 (function () {
