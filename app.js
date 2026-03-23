@@ -586,7 +586,7 @@ if ('serviceWorker' in navigator) {
       + '<title>業務記録・点呼記録簿</title>'
       + '<style>'
       + '@page { size: landscape; margin: 0; }'
-      + '@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 3mm; } }'
+      + '@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 0; } }'
       + 'body { font-family: "Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif; font-size: 5.5pt; margin: 0; }'
       + 'h1 { font-size: 11pt; text-align: center; margin: 1px 0; }'
       + '.info { display: flex; justify-content: space-between; margin: 1px 10px 2px; font-size: 8pt; }'
@@ -607,8 +607,7 @@ if ('serviceWorker' in navigator) {
       + '<h1>【業務記録・点呼記録簿】(MKT)</h1>'
       + '<div class="info">'
       + '<span>令和 ' + state.year + ' 年 ' + state.month + ' 月度</span>'
-      + '<span>名前: ' + name + '</span>'
-      + '<span>車両No: ' + vehicle + '</span>'
+      + '<span>名前: ' + name + '　　車両No: ' + vehicle + '</span>'
       + '</div>'
       + '<table>'
       + '<colgroup>'
@@ -651,20 +650,23 @@ if ('serviceWorker' in navigator) {
       + '</tbody></table>'
       + '</body></html>';
 
-    // 帳票HTMLをBlobに保存してページ遷移
-    // 戻るボタン付きのツールバーをHTMLに追加
+    // 新しいウィンドウで帳票を表示（Blob URLだとAndroidでprint()が動かないため）
     var printHtml = html.replace('</body>',
       '<div class="no-print" style="position:fixed;top:0;left:0;right:0;display:flex;gap:10px;padding:12px 16px;background:#1a73e8;z-index:9999;">'
-      + '<button onclick="history.back()" style="padding:14px 20px;border:none;border-radius:8px;background:white;color:#1a73e8;font-size:16px;font-weight:bold;cursor:pointer;min-width:80px;">← 戻る</button>'
-      + '<button onclick="window.print()" style="padding:14px 20px;border:none;border-radius:8px;background:rgba(255,255,255,0.25);color:white;font-size:16px;font-weight:bold;cursor:pointer;flex:1;">印刷 / PDF保存</button>'
+      + '<button onclick="window.close();history.back();" style="padding:14px 20px;border:none;border-radius:8px;background:white;color:#1a73e8;font-size:16px;font-weight:bold;cursor:pointer;min-width:80px;">\u2190 \u623b\u308b</button>'
+      + '<button onclick="window.print()" style="padding:14px 20px;border:none;border-radius:8px;background:rgba(255,255,255,0.25);color:white;font-size:16px;font-weight:bold;cursor:pointer;flex:1;">\u5370\u5237 / PDF\u4fdd\u5b58</button>'
       + '</div>'
       + '<style>.no-print{} @media print{.no-print{display:none !important;}}</style>'
       + '<style>body{padding-top:60px;} @media print{body{padding-top:0;}}</style>'
       + '</body>');
 
-    var blob = new Blob([printHtml], { type: 'text/html' });
-    var url = URL.createObjectURL(blob);
-    location.href = url;
+    var w = window.open('', '_blank');
+    if (w) {
+      w.document.write(printHtml);
+      w.document.close();
+    } else {
+      showToast('\u30dd\u30c3\u30d7\u30a2\u30c3\u30d7\u304c\u30d6\u30ed\u30c3\u30af\u3055\u308c\u307e\u3057\u305f\u3002\u8a31\u53ef\u3057\u3066\u304f\u3060\u3055\u3044');
+    }
   }
 
   // --- タブ切り替え ---

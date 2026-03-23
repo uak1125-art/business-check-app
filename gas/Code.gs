@@ -75,7 +75,7 @@ function validatePayload(data) {
 
 // ヘッダー1行目（グループ）
 var HEADER_ROW1 = [
-  '日', '曜', '月',
+  '月', '日', '曜',
   '乗務前 自主点呼', '', '', '', '', '', '', '', '',
   '乗務後 自主点呼', '', '', '', '', '', '', '', ''
 ];
@@ -110,9 +110,9 @@ function formatNewSheet(sheet, driverName, year, month) {
   sheet.getRange(1, 1, 2, 21).setBorder(true, true, true, true, true, true, '#333333', SpreadsheetApp.BorderStyle.SOLID);
 
   // --- 列幅設定 ---
-  sheet.setColumnWidth(1, 30);   // 日
-  sheet.setColumnWidth(2, 30);   // 曜
-  sheet.setColumnWidth(3, 30);   // 月
+  sheet.setColumnWidth(1, 30);   // 月
+  sheet.setColumnWidth(2, 30);   // 日
+  sheet.setColumnWidth(3, 30);   // 曜
   sheet.setColumnWidth(4, 50);   // 時間(前)
   sheet.setColumnWidth(5, 85);   // 開始走行距離
   sheet.setColumnWidth(6, 75);   // 配達エリア
@@ -162,7 +162,7 @@ function prefillAllDays(sheet, year, month) {
   for (var d = 1; d <= daysInMonth; d++) {
     var dateObj = new Date(westernYear, parseInt(month) - 1, d);
     var wdIndex = dateObj.getDay();
-    var row = [d, weekdays[wdIndex], month, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+    var row = [month, d, weekdays[wdIndex], '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
     sheet.appendRow(row);
     var rowNum = sheet.getLastRow();
     formatDataRow(sheet, rowNum);
@@ -215,7 +215,7 @@ function doGet(e) {
 
     // 3行目以降がデータ（1行目: グループヘッダー、2行目: 項目ヘッダー）
     for (var i = 2; i < rows.length; i++) {
-      var day = String(rows[i][0]);
+      var day = String(rows[i][1]);
       if (!day || day === '') continue;
 
       // データが全て空の行はスキップ
@@ -291,7 +291,7 @@ function doPost(e) {
     var rows = sheet.getDataRange().getValues();
     var targetRow = -1;
     for (var i = 2; i < rows.length; i++) {
-      if (String(rows[i][0]) === String(data.day)) {
+      if (String(rows[i][1]) === String(data.day)) {
         targetRow = i + 1;
         break;
       }
@@ -311,9 +311,9 @@ function doPost(e) {
     var wdName = weekdays[wdIndex];
 
     var rowData = [
+      data.month,
       data.day,
       wdName,
-      data.month,
       data.beforeTime || '',
       data.beforeDistance || '',
       data.deliveryArea || '',
