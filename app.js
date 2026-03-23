@@ -650,9 +650,45 @@ if ('serviceWorker' in navigator) {
       + '</tbody></table>'
       + '</body></html>';
 
-    // sessionStorageに保存して専用ページに遷移
-    sessionStorage.setItem('printHtml', html);
-    location.href = './print.html';
+    // 印刷用オーバーレイを表示して印刷
+    var overlay = document.createElement('div');
+    overlay.id = 'print-overlay';
+    overlay.innerHTML = '<div class="print-toolbar no-print">'
+      + '<button id="print-cancel-btn">\u2190 \u623b\u308b</button>'
+      + '<button id="print-exec-btn">\u5370\u5237 / PDF\u4fdd\u5b58</button>'
+      + '</div>'
+      + '<div id="print-body"></div>';
+
+    document.body.appendChild(overlay);
+
+    // body/styleを抽出して挿入
+    var bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+    var styleMatches = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi);
+    var printStyle = document.createElement('div');
+    printStyle.id = 'print-injected-styles';
+    if (styleMatches) { printStyle.innerHTML = styleMatches.join(''); }
+    document.head.appendChild(printStyle);
+    if (bodyMatch) { document.getElementById('print-body').innerHTML = bodyMatch[1]; }
+
+    // アプリ本体を非表示
+    document.querySelectorAll('body > :not(#print-overlay):not(#toast)').forEach(function(el) {
+      el.setAttribute('data-print-hidden', '');
+      el.style.display = 'none';
+    });
+
+    function closePrintOverlay() {
+      document.querySelectorAll('[data-print-hidden]').forEach(function(el) {
+        el.style.display = '';
+        el.removeAttribute('data-print-hidden');
+      });
+      overlay.remove();
+      printStyle.remove();
+    }
+
+    document.getElementById('print-cancel-btn').addEventListener('click', closePrintOverlay);
+    document.getElementById('print-exec-btn').addEventListener('click', function() {
+      window.print();
+    });
   }
 
   // --- タブ切り替え ---
