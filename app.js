@@ -650,45 +650,29 @@ if ('serviceWorker' in navigator) {
       + '</tbody></table>'
       + '</body></html>';
 
-    // 印刷用オーバーレイを表示して印刷
-    var overlay = document.createElement('div');
-    overlay.id = 'print-overlay';
-    overlay.innerHTML = '<div class="print-toolbar no-print">'
-      + '<button id="print-cancel-btn">\u2190 \u623b\u308b</button>'
-      + '<button id="print-exec-btn">\u5370\u5237 / PDF\u4fdd\u5b58</button>'
-      + '</div>'
-      + '<div id="print-body"></div>';
+    // ファイル名
+    var fileName = name + '_R' + state.year + '\u5e74' + state.month + '\u6708.html';
+    var blob = new Blob([html], { type: 'text/html' });
 
-    document.body.appendChild(overlay);
-
-    // body/styleを抽出して挿入
-    var bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-    var styleMatches = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi);
-    var printStyle = document.createElement('div');
-    printStyle.id = 'print-injected-styles';
-    if (styleMatches) { printStyle.innerHTML = styleMatches.join(''); }
-    document.head.appendChild(printStyle);
-    if (bodyMatch) { document.getElementById('print-body').innerHTML = bodyMatch[1]; }
-
-    // アプリ本体を非表示
-    document.querySelectorAll('body > :not(#print-overlay):not(#toast)').forEach(function(el) {
-      el.setAttribute('data-print-hidden', '');
-      el.style.display = 'none';
-    });
-
-    function closePrintOverlay() {
-      document.querySelectorAll('[data-print-hidden]').forEach(function(el) {
-        el.style.display = '';
-        el.removeAttribute('data-print-hidden');
-      });
-      overlay.remove();
-      printStyle.remove();
+    // Share APIが使えればシェア（Android向け）、なければダウンロード
+    if (navigator.share && navigator.canShare) {
+      var file = new File([blob], fileName, { type: 'text/html' });
+      if (navigator.canShare({ files: [file] })) {
+        navigator.share({
+          title: '\u70b9\u547c\u8a18\u9332\u7c3f ' + name,
+          files: [file]
+        }).catch(function() {});
+        return;
+      }
     }
 
-    document.getElementById('print-cancel-btn').addEventListener('click', closePrintOverlay);
-    document.getElementById('print-exec-btn').addEventListener('click', function() {
-      window.print();
-    });
+    // フォールバック: ダウンロード
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast('\u30d5\u30a1\u30a4\u30eb\u3092\u4fdd\u5b58\u3057\u307e\u3057\u305f\u3002\u30d6\u30e9\u30a6\u30b6\u3067\u958b\u3044\u3066\u5370\u5237\u3067\u304d\u307e\u3059');
   }
 
   // --- タブ切り替え ---

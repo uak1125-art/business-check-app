@@ -1,5 +1,5 @@
 // Service Worker — 業務記録・点呼記録簿 PWA
-var CACHE_NAME = 'mkt-check-v17';
+var CACHE_NAME = 'mkt-check-v18';
 var URLS_TO_CACHE = [
   './',
   './index.html',
