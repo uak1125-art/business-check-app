@@ -650,29 +650,9 @@ if ('serviceWorker' in navigator) {
       + '</tbody></table>'
       + '</body></html>';
 
-    // ファイル名
-    var fileName = name + '_R' + state.year + '\u5e74' + state.month + '\u6708.html';
-    var blob = new Blob([html], { type: 'text/html' });
-
-    // Share APIが使えればシェア（Android向け）、なければダウンロード
-    if (navigator.share && navigator.canShare) {
-      var file = new File([blob], fileName, { type: 'text/html' });
-      if (navigator.canShare({ files: [file] })) {
-        navigator.share({
-          title: '\u70b9\u547c\u8a18\u9332\u7c3f ' + name,
-          files: [file]
-        }).catch(function() {});
-        return;
-      }
-    }
-
-    // フォールバック: ダウンロード
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = fileName;
-    a.click();
-    URL.revokeObjectURL(a.href);
-    showToast('\u30d5\u30a1\u30a4\u30eb\u3092\u4fdd\u5b58\u3057\u307e\u3057\u305f\u3002\u30d6\u30e9\u30a6\u30b6\u3067\u958b\u3044\u3066\u5370\u5237\u3067\u304d\u307e\u3059');
+    // sessionStorageに保存してプレビューページに遷移
+    sessionStorage.setItem('printHtml', html);
+    location.href = './print.html';
   }
 
   // --- タブ切り替え ---
