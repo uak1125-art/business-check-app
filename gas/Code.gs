@@ -176,6 +176,91 @@ function prefillAllDays(sheet, year, month) {
   }
 }
 
+// --- データ読み取り（サーバーから復元用） ---
+function doGet(e) {
+  try {
+    var name = (e.parameter.name || '').trim();
+    var vehicle = (e.parameter.vehicle || '').trim();
+    var year = e.parameter.year;
+    var month = e.parameter.month;
+
+    // ドライバー認証
+    if (ALLOWED_DRIVERS.length > 0) {
+      var found = false;
+      for (var i = 0; i < ALLOWED_DRIVERS.length; i++) {
+        if (ALLOWED_DRIVERS[i].name === name && ALLOWED_DRIVERS[i].vehicle === vehicle) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        return ContentService.createTextOutput(
+          JSON.stringify({ status: 'error', message: '未登録のドライバーです' })
+        ).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheetName = name + '_R' + year + '年' + month + '月';
+    var sheet = ss.getSheetByName(sheetName);
+
+    if (!sheet) {
+      return ContentService.createTextOutput(
+        JSON.stringify({ status: 'ok', records: {} })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var rows = sheet.getDataRange().getValues();
+    var records = {};
+
+    // 3行目以降がデータ（1行目: グループヘッダー、2行目: 項目ヘッダー）
+    for (var i = 2; i < rows.length; i++) {
+      var day = String(rows[i][0]);
+      if (!day || day === '') continue;
+
+      // データが全て空の行はスキップ
+      var hasData = false;
+      for (var c = 3; c < 21; c++) {
+        if (rows[i][c] !== '' && rows[i][c] !== null && rows[i][c] !== undefined) {
+          hasData = true;
+          break;
+        }
+      }
+      if (!hasData) continue;
+
+      var key = year + '-' + month + '-' + day;
+      records[key] = {
+        beforeTime: String(rows[i][3] || ''),
+        beforeDistance: String(rows[i][4] || ''),
+        deliveryArea: String(rows[i][5] || ''),
+        beforeAlcohol: String(rows[i][6] || ''),
+        beforeDrinking: String(rows[i][7] || ''),
+        beforeHealth: String(rows[i][8] || ''),
+        beforeInspection: String(rows[i][9] || ''),
+        beforeInspector: String(rows[i][10] || ''),
+        beforeNote: String(rows[i][11] || ''),
+        afterTime: String(rows[i][12] || ''),
+        afterDistance: String(rows[i][13] || ''),
+        afterAlcohol: String(rows[i][15] || ''),
+        afterDrinking: String(rows[i][16] || ''),
+        afterHealth: String(rows[i][17] || ''),
+        afterVehicle: String(rows[i][18] || ''),
+        afterInspector: String(rows[i][19] || ''),
+        afterNote: String(rows[i][20] || '')
+      };
+    }
+
+    return ContentService.createTextOutput(
+      JSON.stringify({ status: 'ok', records: records })
+    ).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService.createTextOutput(
+      JSON.stringify({ status: 'error', message: err.toString() })
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
 function doPost(e) {
   try {
     var ss = SpreadsheetApp.openById(SPREADSHEET_ID);

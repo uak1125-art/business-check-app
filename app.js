@@ -835,6 +835,54 @@ if ('serviceWorker' in navigator) {
       e.target.value = '';
     });
 
+    // サーバーから復元
+    document.getElementById('restore-server-btn').addEventListener('click', function () {
+      if (!state.settings.name || !state.settings.vehicle) {
+        showToast('先に「設定」で名前と車両No.を登録してください');
+        return;
+      }
+      var year = prompt('復元する年（令和）を入力してください（例: 7）', String(state.year));
+      if (!year) return;
+      var month = prompt('復元する月を入力してください（例: 3）', String(state.month));
+      if (!month) return;
+
+      var url = GAS_URL
+        + '?name=' + encodeURIComponent(state.settings.name)
+        + '&vehicle=' + encodeURIComponent(state.settings.vehicle)
+        + '&year=' + encodeURIComponent(year)
+        + '&month=' + encodeURIComponent(month);
+
+      showToast('サーバーからデータを取得中...');
+
+      fetch(url, { method: 'GET', redirect: 'follow' })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.status === 'error') {
+            showToast('エラー: ' + data.message);
+            return;
+          }
+          var records = data.records || {};
+          var count = 0;
+          for (var key in records) {
+            state.records[key] = records[key];
+            count++;
+          }
+          if (count === 0) {
+            showToast('令和' + year + '年' + month + '月のデータはありません');
+            return;
+          }
+          saveRecords();
+          renderDayGrid();
+          loadDayForm();
+          updateMonthlyList();
+          showToast('令和' + year + '年' + month + '月のデータを' + count + '件復元しました');
+        })
+        .catch(function (err) {
+          console.error('サーバー復元エラー:', err);
+          showToast('サーバーとの通信に失敗しました');
+        });
+    });
+
     // データ削除
     document.getElementById('clear-data-btn').addEventListener('click', function () {
       if (confirm('全てのデータを削除しますか？この操作は元に戻せません。')) {
