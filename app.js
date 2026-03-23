@@ -335,10 +335,63 @@ if ('serviceWorker' in navigator) {
     });
   }
 
-  // --- 保存 ---
+  // --- 乗務前のみ保存（ローカルのみ） ---
+  function saveBeforeOnly() {
+    const key = recordKey(state.year, state.month, state.day);
+    const existing = state.records[key] || {};
+    const form = getFormData();
+
+    // 乗務前フィールドだけ更新、乗務後は既存データを維持
+    existing.beforeTime = form.beforeTime;
+    existing.beforeDistance = form.beforeDistance;
+    existing.deliveryArea = form.deliveryArea;
+    existing.beforeAlcohol = form.beforeAlcohol;
+    existing.beforeDrinking = form.beforeDrinking;
+    existing.beforeHealth = form.beforeHealth;
+    existing.beforeInspection = form.beforeInspection;
+    existing.beforeInspector = form.beforeInspector;
+    existing.beforeNote = form.beforeNote;
+
+    state.records[key] = existing;
+    saveRecords();
+    renderDayGrid();
+    updateMonthlyList();
+    showToast(state.day + '日の乗務前を保存しました');
+  }
+
+  // --- 乗務後のみ保存（ローカルのみ） ---
+  function saveAfterOnly() {
+    const key = recordKey(state.year, state.month, state.day);
+    const existing = state.records[key] || {};
+    const form = getFormData();
+
+    // 乗務後フィールドだけ更新、乗務前は既存データを維持
+    existing.afterTime = form.afterTime;
+    existing.afterDistance = form.afterDistance;
+    existing.afterAlcohol = form.afterAlcohol;
+    existing.afterDrinking = form.afterDrinking;
+    existing.afterHealth = form.afterHealth;
+    existing.afterVehicle = form.afterVehicle;
+    existing.afterInspector = form.afterInspector;
+    existing.afterNote = form.afterNote;
+
+    state.records[key] = existing;
+    saveRecords();
+    renderDayGrid();
+    updateMonthlyList();
+    showToast(state.day + '日の乗務後を保存しました');
+  }
+
+  // --- 日を保存（最終保存 + GAS送信） ---
   function saveDay() {
     const key = recordKey(state.year, state.month, state.day);
-    const data = getFormData();
+    const existing = state.records[key] || {};
+    const form = getFormData();
+
+    // 既存データとフォームをマージ（フォームの値を優先）
+    var data = {};
+    for (var k in existing) { data[k] = existing[k]; }
+    for (var k in form) { data[k] = form[k]; }
 
     // 最低限のバリデーション
     if (!data.beforeTime && !data.afterTime && !data.beforeDistance) {
@@ -619,7 +672,13 @@ if ('serviceWorker' in navigator) {
     document.getElementById('before-distance').addEventListener('input', updateDailyDistance);
     document.getElementById('after-distance').addEventListener('input', updateDailyDistance);
 
-    // 保存
+    // 乗務前保存
+    document.getElementById('save-before-btn').addEventListener('click', saveBeforeOnly);
+
+    // 乗務後保存
+    document.getElementById('save-after-btn').addEventListener('click', saveAfterOnly);
+
+    // 日を保存（最終）
     document.getElementById('save-btn').addEventListener('click', saveDay);
 
     // 設定保存

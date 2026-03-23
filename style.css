@@ -390,6 +390,16 @@ body {
   margin-bottom: 8px;
 }
 
+.section-save {
+  padding: 4px 0 0;
+}
+
+.section-save .secondary-btn {
+  padding: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 .danger-btn {
   width: 100%;
   padding: 12px;
