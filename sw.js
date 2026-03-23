@@ -1,10 +1,11 @@
 // Service Worker — 業務記録・点呼記録簿 PWA
-var CACHE_NAME = 'mkt-check-v11';
+var CACHE_NAME = 'mkt-check-v12';
 var URLS_TO_CACHE = [
   './',
   './index.html',
   './style.css',
   './app.js',
+  './guide.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png'

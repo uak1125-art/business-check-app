@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>業務記録・点呼アプリ 使い方ガイド</title>
+<style>
+@page { size: A4; margin: 15mm 18mm; }
+@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .no-print { display: none !important; } }
+body { font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif; font-size: 10.5pt; line-height: 1.7; color: #222; max-width: 720px; margin: 0 auto; padding: 20px; }
+h1 { font-size: 16pt; text-align: center; border-bottom: 3px solid #1a73e8; padding-bottom: 8px; margin-bottom: 20px; }
+h2 { font-size: 13pt; color: #1a73e8; margin-top: 28px; margin-bottom: 10px; border-left: 4px solid #1a73e8; padding-left: 10px; }
+h3 { font-size: 11pt; margin-top: 18px; margin-bottom: 6px; }
+p, li { margin-bottom: 4px; }
+.step-block { background: #f8f9fa; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; }
+.step-block strong { color: #1a73e8; }
+.btn-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+.btn-table th, .btn-table td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; font-size: 10pt; }
+.btn-table th { background: #e8f0fe; font-weight: bold; }
+.qa { margin-bottom: 14px; }
+.qa-q { font-weight: bold; margin-bottom: 2px; }
+.qa-a { margin-left: 1.5em; color: #444; }
+.section-divider { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+.toolbar { position: fixed; top: 0; left: 0; right: 0; display: flex; gap: 10px; padding: 12px 16px; background: #1a73e8; z-index: 9999; }
+.toolbar button { padding: 12px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; }
+.toolbar .back-btn { background: white; color: #1a73e8; min-width: 80px; }
+.toolbar .print-btn { background: rgba(255,255,255,0.25); color: white; flex: 1; }
+.spacer { height: 56px; }
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+<button class="back-btn" onclick="window.close(); history.back();">&larr; 戻る</button>
+<button class="print-btn" onclick="window.print();">印刷 / PDF保存</button>
+</div>
+<div class="spacer no-print"></div>
+
+<h1>業務記録・点呼アプリ 使い方ガイド</h1>
+
+<h2>&#9632; はじめに</h2>
+
+<p>2025年4月より、軽貨物ドライバーにも乗務前・乗務後の点呼記録が法律で義務化されました。記録は1年間の保存が必要です。このアプリは、本来手書きで行う点呼記録簿の作成・保存を、スマホで簡単にできるようにしたものです。</p>
+
+<p>以下のURLをスマホのブラウザで開いてください。</p>
+
+<div class="step-block" style="text-align:center;">
+<a href="https://tenko.hassii33.com/" style="font-size:12pt; color:#1a73e8; word-break:break-all;">https://tenko.hassii33.com/</a>
+</div>
+
+<h3>【初回セットアップ】</h3>
+<p>1 . 「設定」タブで名前・車両No.を登録<br>
+2 . 「設定を保存」を押す<br>
+※ 設定を保存しないと、日次記録の入力・保存はできません</p>
+
+<h3>【ホーム画面に追加する方法】</h3>
+<p><strong>&#9632; Android（Chrome）の場合</strong><br>
+　メニュー（︙）→「ホーム画面に追加」→「インストール」</p>
+<p><strong>&#9632; iPhone（Safari）の場合</strong><br>
+　共有ボタン（□↑）→「ホーム画面に追加」→「インストール」<br>
+　※ SafariでURLを開いてください（LINEやChromeからは追加できません）</p>
+<p>→ ホーム画面にアイコンが追加され、アプリのように使えます</p>
+
+<hr class="section-divider">
+
+<h2>&#9632; 毎日の流れ</h2>
+
+<div class="step-block">
+<strong>【&#9312; 朝（出発前）】</strong><br>
+1 . アプリを開く<br>
+2 . 「乗務前 自主点呼」に記入する<br>
+　・時間、走行距離、配達エリア、アルコール検査など<br>
+3 . 「乗務前を保存」を押す<br>
+4 . アプリを閉じてOK
+</div>
+
+<div class="step-block">
+<strong>【&#9313; 夕方（業務終了後）】</strong><br>
+1 . アプリを開く（朝の入力内容はそのまま残っています）<br>
+2 . 「乗務後 自主点呼」に記入する<br>
+　・時間、走行距離、アルコール検査など<br>
+3 . 「乗務後を保存」を押す
+</div>
+
+<div class="step-block">
+<strong>【&#9314; 最後の確認】</strong><br>
+1 . 乗務前・乗務後の内容を確認する<br>
+2 . 「この日を保存」を押す<br>
+3 . これで管理者側にデータが送信されます
+</div>
+
+<h2>&#9632; ボタンの役割</h2>
+
+<table class="btn-table">
+<tr><th>ボタン</th><th>いつ使う</th><th>何が起きる</th></tr>
+<tr><td>乗務前を保存</td><td>朝、出発前</td><td>入力内容がアプリに保存される</td></tr>
+<tr><td>乗務後を保存</td><td>業務終了後</td><td>入力内容がアプリに保存される</td></tr>
+<tr><td>この日を保存</td><td>1日の最後</td><td>管理者側にデータが送られる</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2>&#9632; 月次一覧の使い方</h2>
+<p>・画面上部の「月次一覧」タブを押すと、その月の記録が一覧で表示されます</p>
+<p>・各日付をタップすると、その日の入力画面に移動できます</p>
+<p>・画面上部の「令和○年○月度」で月を切り替えられます</p>
+<p>・画面下の「PDF出力」を押すと、1ヶ月分の記録を帳票として印刷・保存できます</p>
+
+<hr class="section-divider">
+
+<h2>&#9632; 設定の使い方</h2>
+<p>・画面上部の「設定」タブを押すと、基本設定とデータ管理の画面が表示されます</p>
+
+<h3>【基本設定】</h3>
+<p>・名前 → 自分の氏名を入力してください。日次記録の画面に表示されます</p>
+<p>・車両No. → 自分が乗る車両の番号を入力してください</p>
+<p>・デフォルト点呼執行者 → 毎回同じ場合は、ここに入力しておくと自動で入ります</p>
+<p>・入力したら「設定を保存」を押してください</p>
+
+<h3>【データ管理】</h3>
+<p>・「データをバックアップ」→ アプリ内のデータをファイルとして保存します</p>
+<p>・「データを復元」→ バックアップファイルからデータを読み込みます</p>
+<p>・「全データ削除」→ アプリ内の全ての記録を消去します（元に戻せません）</p>
+
+<hr class="section-divider">
+
+<h2>&#9632; よくある質問</h2>
+
+<h3>【基本操作】</h3>
+
+<div class="qa">
+<div class="qa-q">Q. 途中でアプリを閉じても大丈夫？</div>
+<div class="qa-a">A. 「乗務前を保存」または「乗務後を保存」を押していれば、入力内容は消えません。</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q. 「この日を保存」を押し忘れたら？</div>
+<div class="qa-a">A. 管理者側にはデータが届いていません。気づいた時点で「この日を保存」を押してください。</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q. 日付を間違えて保存してしまった場合は？</div>
+<div class="qa-a">A. 間違えた日付に移動して、正しい内容に書き直してから「この日を保存」を押せば上書きされます。間違えた方の日は、そのまま空欄にしておけば問題ありません。</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q. 昨日の分を入力し忘れた。後から入力できる？</div>
+<div class="qa-a">A. できます。日付の「＜」ボタンまたはカレンダーから昨日の日付を選んで、そこから入力・保存してください。</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q. 走行距離を間違えて入力した。修正できる？</div>
+<div class="qa-a">A. できます。該当の日付を開いて、数字を修正してから「この日を保存」を押してください。</div>
+</div>
+
+<h3>【保存・データ】</h3>
+
+<div class="qa">
+<div class="qa-q">Q. 「乗務前を保存」だけ押して「この日を保存」を押し忘れた日が続いたらどうなる？</div>
+<div class="qa-a">A. アプリの中にはデータが残っていますが、管理者側には届いていません。該当の日付をひとつずつ開いて「この日を保存」を押してください。</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q. スマホを機種変更したらデータは引き継げる？</div>
+<div class="qa-a">A. そのままでは引き継げません。機種変更の前に、設定タブの「データをバックアップ」でファイルを保存しておいてください。新しいスマホで「データを復元」から読み込めます。</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q. スマホの電波が悪い場所で「この日を保存」を押した場合、データは届く？</div>
+<div class="qa-a">A. 電波がない場合、管理者側には届かない可能性があります。アプリ内のデータは保存されているので、電波が良い場所でもう一度「この日を保存」を押してください。</div>
+</div>
+
+<h3>【アプリの動作】</h3>
+
+<div class="qa">
+<div class="qa-q">Q. アプリが開かない・画面が真っ白になった</div>
+<div class="qa-a">A. 一度アプリを完全に閉じて（タスクキル）、もう一度開いてみてください。それでも直らない場合は、スマホの設定からブラウザのキャッシュを削除してください。入力済みのデータは消えません。</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q. 前に入力したはずのデータが消えている</div>
+<div class="qa-a">A. ブラウザのデータ削除やキャッシュクリアを行うと、アプリ内のデータも消えることがあります。定期的に設定タブの「データをバックアップ」で保存しておくと安心です。万が一データが必要な場合は、管理者に連絡してください。管理者側でデータを保管しているので、送り直すことができます。</div>
+</div>
+
+<h3>【月次一覧】</h3>
+
+<div class="qa">
+<div class="qa-q">Q. 先月の記録を見たい</div>
+<div class="qa-a">A. 月次一覧の画面上部にある「令和○年○月度」の月を変更すると、その月の一覧に切り替わります。</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q. 月次一覧に「未入力」と表示されている日がある</div>
+<div class="qa-a">A. その日のデータがまだ保存されていません。タップして入力画面に移動し、記録を入力してください。</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q. PDF出力は何に使う？</div>
+<div class="qa-a">A. 1ヶ月分の点呼記録を紙で保管したい場合や、提出が必要な場合に使います。「PDF出力」を押すと印刷用の画面が表示されるので、そこから印刷またはPDF保存ができます。</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q. PDF出力したが文字が小さい・見切れている</div>
+<div class="qa-a">A. 印刷設定で「横向き」になっているか確認してください。また、余白を「なし」または「最小」に設定すると見やすくなります。</div>
+</div>
+
+<h3>【設定】</h3>
+
+<div class="qa">
+<div class="qa-q">Q. 名前や車両番号は最初に一度設定すればいい？</div>
+<div class="qa-a">A. はい。一度「設定を保存」を押せば、次からは自動で表示されます。変更があったときだけ修正してください。</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q. デフォルト点呼執行者とは？</div>
+<div class="qa-a">A. 毎日の点呼執行者が同じ人の場合、ここに名前を入れておくと、日次記録の点呼執行者欄に自動で入ります。入力の手間が省けます。</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q. データをバックアップはいつやればいい？</div>
+<div class="qa-a">A. 月に1回、月末にやっておくと安心です。スマホの故障や機種変更に備えて、保存したファイルはクラウド（Googleドライブなど）に置いておくのがおすすめです。</div>
+</div>
+
+<div class="qa">
+<div class="qa-q">Q. 「全データ削除」を押してしまったら？</div>
+<div class="qa-a">A. 元に戻せません。バックアップファイルがあれば「データを復元」で戻せます。バックアップがない場合は、管理者に連絡してください。</div>
+</div>
+
+</body>
+</html>

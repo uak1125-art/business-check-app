@@ -367,8 +367,18 @@ if ('serviceWorker' in navigator) {
     });
   }
 
+  // --- 設定チェック ---
+  function checkSettingsRequired() {
+    if (!state.settings.name || !state.settings.vehicle) {
+      showToast('先に「設定」タブで名前と車両No.を登録してください');
+      return false;
+    }
+    return true;
+  }
+
   // --- 乗務前のみ保存（ローカルのみ） ---
   function saveBeforeOnly() {
+    if (!checkSettingsRequired()) return;
     const key = recordKey(state.year, state.month, state.day);
     const existing = state.records[key] || {};
     const form = getFormData();
@@ -394,6 +404,7 @@ if ('serviceWorker' in navigator) {
 
   // --- 乗務後のみ保存 ---
   function saveAfterOnly() {
+    if (!checkSettingsRequired()) return;
     const key = recordKey(state.year, state.month, state.day);
     const existing = state.records[key] || {};
     const form = getFormData();
@@ -442,6 +453,7 @@ if ('serviceWorker' in navigator) {
 
   // --- 日を保存（最終保存 + GAS送信） ---
   function saveDay() {
+    if (!checkSettingsRequired()) return;
     const key = recordKey(state.year, state.month, state.day);
     const existing = state.records[key] || {};
     const form = getFormData();
