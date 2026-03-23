@@ -76,11 +76,11 @@
       </div>
       <div class="form-group">
         <label>開始走行距離 (km)</label>
-        <input type="number" id="before-distance" inputmode="numeric" placeholder="例: 98000">
+        <input type="number" id="before-distance" inputmode="numeric" placeholder="例: 98000" min="0" max="999999">
       </div>
       <div class="form-group">
         <label>配達エリア</label>
-        <input type="text" id="delivery-area" placeholder="例: 久留米市">
+        <input type="text" id="delivery-area" placeholder="例: 久留米市" maxlength="30">
       </div>
       <div class="form-group">
         <label>アルコール検知器の使用</label>
@@ -113,11 +113,11 @@
       </div>
       <div class="form-group">
         <label>点呼執行者</label>
-        <input type="text" id="before-inspector" placeholder="点呼執行者名">
+        <input type="text" id="before-inspector" placeholder="点呼執行者名" maxlength="20">
       </div>
       <div class="form-group">
         <label>備考</label>
-        <input type="text" id="before-note" placeholder="備考（任意）">
+        <input type="text" id="before-note" placeholder="備考（任意）" maxlength="50">
       </div>
       <div class="action-bar section-save">
         <button id="save-before-btn" class="secondary-btn">乗務前を保存</button>
@@ -133,7 +133,7 @@
       </div>
       <div class="form-group">
         <label>修了走行距離 (km)</label>
-        <input type="number" id="after-distance" inputmode="numeric" placeholder="例: 98060">
+        <input type="number" id="after-distance" inputmode="numeric" placeholder="例: 98060" min="0" max="999999">
       </div>
       <div class="form-group">
         <label>1日の走行距離</label>
@@ -170,11 +170,11 @@
       </div>
       <div class="form-group">
         <label>点呼執行者</label>
-        <input type="text" id="after-inspector" placeholder="点呼執行者名">
+        <input type="text" id="after-inspector" placeholder="点呼執行者名" maxlength="20">
       </div>
       <div class="form-group">
         <label>備考</label>
-        <input type="text" id="after-note" placeholder="備考（任意）">
+        <input type="text" id="after-note" placeholder="備考（任意）" maxlength="50">
       </div>
       <div class="action-bar section-save">
         <button id="save-after-btn" class="secondary-btn">乗務後を保存</button>
@@ -224,15 +224,15 @@
       <h2 class="section-title">基本設定</h2>
       <div class="form-group">
         <label>名前</label>
-        <input type="text" id="setting-name" placeholder="氏名を入力">
+        <input type="text" id="setting-name" placeholder="氏名を入力" maxlength="20">
       </div>
       <div class="form-group">
         <label>車両 No.</label>
-        <input type="text" id="setting-vehicle" placeholder="車両番号を入力">
+        <input type="text" id="setting-vehicle" placeholder="車両番号を入力" maxlength="20">
       </div>
       <div class="form-group">
         <label>デフォルト点呼執行者</label>
-        <input type="text" id="setting-inspector" placeholder="点呼執行者名（任意）">
+        <input type="text" id="setting-inspector" placeholder="点呼執行者名（任意）" maxlength="20">
       </div>
       <input type="hidden" id="setting-gas-url">
       <button id="save-settings-btn" class="primary-btn">設定を保存</button>

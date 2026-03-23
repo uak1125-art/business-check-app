@@ -14,6 +14,63 @@
 
 var SPREADSHEET_ID = 'ここにスプレッドシートIDを貼り付け';
 
+// 登録済みドライバー（名前と車両番号の組み合わせ）
+// 新しいドライバーを追加する場合はここに追記する
+var ALLOWED_DRIVERS = [
+  // { name: '山田太郎', vehicle: '福岡 480 あ 1234' }
+];
+
+// --- バリデーション ---
+function validatePayload(data) {
+  // 登録済みドライバーチェック（リストが空の場合はスキップ）
+  if (ALLOWED_DRIVERS.length > 0) {
+    var driverName = (data.name || '').trim();
+    var vehicle = (data.vehicle || '').trim();
+    var found = false;
+    for (var i = 0; i < ALLOWED_DRIVERS.length; i++) {
+      if (ALLOWED_DRIVERS[i].name === driverName && ALLOWED_DRIVERS[i].vehicle === vehicle) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      return '未登録のドライバーです';
+    }
+  }
+
+  // 年月日: 数値チェック
+  var year = parseInt(data.year);
+  var month = parseInt(data.month);
+  var day = parseInt(data.day);
+  if (isNaN(year) || year < 1 || year > 20) return '年の値が不正です';
+  if (isNaN(month) || month < 1 || month > 12) return '月の値が不正です';
+  if (isNaN(day) || day < 1 || day > 31) return '日の値が不正です';
+
+  // 走行距離: 0〜999999
+  if (data.beforeDistance) {
+    var bDist = parseInt(data.beforeDistance);
+    if (isNaN(bDist) || bDist < 0 || bDist > 999999) return '開始走行距離の値が不正です';
+  }
+  if (data.afterDistance) {
+    var aDist = parseInt(data.afterDistance);
+    if (isNaN(aDist) || aDist < 0 || aDist > 999999) return '修了走行距離の値が不正です';
+  }
+
+  // テキスト欄: 文字数制限
+  if (data.deliveryArea && String(data.deliveryArea).length > 30) return '配達エリアが長すぎます';
+  if (data.beforeNote && String(data.beforeNote).length > 50) return '乗務前備考が長すぎます';
+  if (data.afterNote && String(data.afterNote).length > 50) return '乗務後備考が長すぎます';
+  if (data.beforeInspector && String(data.beforeInspector).length > 20) return '乗務前点呼執行者名が長すぎます';
+  if (data.afterInspector && String(data.afterInspector).length > 20) return '乗務後点呼執行者名が長すぎます';
+
+  // 時間: HH:MM形式チェック
+  var timeRegex = /^\d{1,2}:\d{2}$/;
+  if (data.beforeTime && !timeRegex.test(data.beforeTime)) return '乗務前時間の形式が不正です';
+  if (data.afterTime && !timeRegex.test(data.afterTime)) return '乗務後時間の形式が不正です';
+
+  return null; // OK
+}
+
 // ヘッダー1行目（グループ）
 var HEADER_ROW1 = [
   '日', '曜', '月',
@@ -121,6 +178,14 @@ function doPost(e) {
   try {
     var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     var data = JSON.parse(e.postData.contents);
+
+    // バリデーション
+    var validationError = validatePayload(data);
+    if (validationError) {
+      return ContentService.createTextOutput(
+        JSON.stringify({ status: 'error', message: validationError })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
 
     // シート名: ドライバー名_R{年}年{月}月
     var driverName = data.name || '名前未設定';

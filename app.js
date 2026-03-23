@@ -389,6 +389,30 @@ if ('serviceWorker' in navigator) {
     showToast(state.day + '日の乗務後を保存しました');
   }
 
+  // --- 入力値バリデーション ---
+  function validateData(data) {
+    // 走行距離: 0〜999999
+    var bDist = parseInt(data.beforeDistance);
+    if (data.beforeDistance && (isNaN(bDist) || bDist < 0 || bDist > 999999)) {
+      return '開始走行距離の値が正しくありません（0〜999999）';
+    }
+    var aDist = parseInt(data.afterDistance);
+    if (data.afterDistance && (isNaN(aDist) || aDist < 0 || aDist > 999999)) {
+      return '修了走行距離の値が正しくありません（0〜999999）';
+    }
+    // テキスト欄: 文字数制限
+    if (data.deliveryArea && data.deliveryArea.length > 30) {
+      return '配達エリアは30文字以内で入力してください';
+    }
+    if ((data.beforeNote && data.beforeNote.length > 50) || (data.afterNote && data.afterNote.length > 50)) {
+      return '備考は50文字以内で入力してください';
+    }
+    if ((data.beforeInspector && data.beforeInspector.length > 20) || (data.afterInspector && data.afterInspector.length > 20)) {
+      return '点呼執行者名は20文字以内で入力してください';
+    }
+    return null;
+  }
+
   // --- 日を保存（最終保存 + GAS送信） ---
   function saveDay() {
     const key = recordKey(state.year, state.month, state.day);
@@ -403,6 +427,13 @@ if ('serviceWorker' in navigator) {
     // 最低限のバリデーション
     if (!data.beforeTime && !data.afterTime && !data.beforeDistance) {
       showToast('データが未入力です');
+      return;
+    }
+
+    // 入力値チェック
+    var error = validateData(data);
+    if (error) {
+      showToast(error);
       return;
     }
 
