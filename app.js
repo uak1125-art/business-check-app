@@ -13,6 +13,11 @@ if ('serviceWorker' in navigator) {
   const SETTINGS_KEY = 'mkt-check-settings';
   const GAS_URL = 'https://script.google.com/macros/s/AKfycbzcj4L17kL61TuzqWZzN89O8vt7syLVTYUdBTxtLG0CahYeCgXjou_cLcaUxIxjTVyl/exec';
 
+  // 登録済みドライバー（名前と車両番号の組み合わせ）
+  const ALLOWED_DRIVERS = [
+    { name: '橋本且弥', vehicle: '6240' }
+  ];
+
   // --- 状態管理 ---
   let state = {
     year: 7,
@@ -98,8 +103,26 @@ if ('serviceWorker' in navigator) {
   }
 
   function saveSettings() {
-    state.settings.name = document.getElementById('setting-name').value.trim();
-    state.settings.vehicle = document.getElementById('setting-vehicle').value.trim();
+    var name = document.getElementById('setting-name').value.trim();
+    var vehicle = document.getElementById('setting-vehicle').value.trim();
+
+    // 登録済みドライバーチェック
+    if (name && vehicle) {
+      var found = false;
+      for (var i = 0; i < ALLOWED_DRIVERS.length; i++) {
+        if (ALLOWED_DRIVERS[i].name === name && ALLOWED_DRIVERS[i].vehicle === vehicle) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        showToast('名前または車両No.が登録されていません');
+        return;
+      }
+    }
+
+    state.settings.name = name;
+    state.settings.vehicle = vehicle;
     state.settings.inspector = document.getElementById('setting-inspector').value.trim();
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
     updateDisplayInfo();
