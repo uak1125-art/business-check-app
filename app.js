@@ -16,7 +16,8 @@ if ('serviceWorker' in navigator) {
   // 登録済みドライバー（名前と車両番号の組み合わせ）
   const ALLOWED_DRIVERS = [
     { name: '橋本且弥', vehicle: '6240' },
-    { name: '清松竜也', vehicle: '6554' }
+    { name: '清松竜也', vehicle: '6554' },
+    { name: '森下富弘', vehicle: '7956' }
   ];
 
   // --- 状態管理 ---
