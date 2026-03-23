@@ -43,8 +43,15 @@ if ('serviceWorker' in navigator) {
     state.month = now.getMonth() + 1;
     state.day = now.getDate();
 
+    syncYearMonth();
+  }
+
+  // --- 年月セレクタを全て同期 ---
+  function syncYearMonth() {
     document.getElementById('year').value = state.year;
     document.getElementById('month').value = state.month;
+    document.getElementById('monthly-year').value = state.year;
+    document.getElementById('monthly-month').value = state.month;
   }
 
   // --- 曜日名 ---
@@ -639,10 +646,11 @@ if ('serviceWorker' in navigator) {
       }
     });
 
-    // 年月変更
+    // 年月変更（日次記録側）
     document.getElementById('year').addEventListener('change', function () {
       state.year = parseInt(this.value);
       state.day = 1;
+      syncYearMonth();
       renderDayGrid();
       renderDayDisplay();
       loadDayForm();
@@ -651,6 +659,27 @@ if ('serviceWorker' in navigator) {
     document.getElementById('month').addEventListener('change', function () {
       state.month = parseInt(this.value);
       state.day = 1;
+      syncYearMonth();
+      renderDayGrid();
+      renderDayDisplay();
+      loadDayForm();
+      updateMonthlyList();
+    });
+
+    // 年月変更（月次一覧側）
+    document.getElementById('monthly-year').addEventListener('change', function () {
+      state.year = parseInt(this.value);
+      state.day = 1;
+      syncYearMonth();
+      renderDayGrid();
+      renderDayDisplay();
+      loadDayForm();
+      updateMonthlyList();
+    });
+    document.getElementById('monthly-month').addEventListener('change', function () {
+      state.month = parseInt(this.value);
+      state.day = 1;
+      syncYearMonth();
       renderDayGrid();
       renderDayDisplay();
       loadDayForm();
