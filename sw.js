@@ -1,5 +1,5 @@
 // Service Worker — 業務記録・点呼記録簿 PWA
-var CACHE_NAME = 'mkt-check-v10';
+var CACHE_NAME = 'mkt-check-v11';
 var URLS_TO_CACHE = [
   './',
   './index.html',
@@ -33,25 +33,26 @@ self.addEventListener('activate', function (e) {
   self.clients.claim();
 });
 
-// キャッシュ優先、なければネットワーク
+// ネットワーク優先、オフライン時はキャッシュを使用
 self.addEventListener('fetch', function (e) {
   e.respondWith(
-    caches.match(e.request).then(function (cached) {
-      return cached || fetch(e.request).then(function (response) {
-        // 成功したレスポンスをキャッシュに追加
-        if (response.status === 200) {
-          var clone = response.clone();
-          caches.open(CACHE_NAME).then(function (cache) {
-            cache.put(e.request, clone);
-          });
-        }
-        return response;
-      });
-    }).catch(function () {
-      // オフラインでキャッシュもない場合
-      if (e.request.destination === 'document') {
-        return caches.match('./index.html');
+    fetch(e.request).then(function (response) {
+      // 成功したらキャッシュを更新
+      if (response.status === 200) {
+        var clone = response.clone();
+        caches.open(CACHE_NAME).then(function (cache) {
+          cache.put(e.request, clone);
+        });
       }
+      return response;
+    }).catch(function () {
+      // オフライン時はキャッシュから返す
+      return caches.match(e.request).then(function (cached) {
+        if (cached) return cached;
+        if (e.request.destination === 'document') {
+          return caches.match('./index.html');
+        }
+      });
     })
   );
 });

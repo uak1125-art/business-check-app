@@ -385,12 +385,13 @@ if ('serviceWorker' in navigator) {
 
     state.records[key] = existing;
     saveRecords();
+    sendToGAS(existing);
     renderDayGrid();
     updateMonthlyList();
     showToast(state.day + '日の乗務前を保存しました');
   }
 
-  // --- 乗務後のみ保存（ローカルのみ） ---
+  // --- 乗務後のみ保存 ---
   function saveAfterOnly() {
     const key = recordKey(state.year, state.month, state.day);
     const existing = state.records[key] || {};
@@ -408,6 +409,7 @@ if ('serviceWorker' in navigator) {
 
     state.records[key] = existing;
     saveRecords();
+    sendToGAS(existing);
     renderDayGrid();
     updateMonthlyList();
     showToast(state.day + '日の乗務後を保存しました');
