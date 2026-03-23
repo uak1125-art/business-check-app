@@ -650,23 +650,9 @@ if ('serviceWorker' in navigator) {
       + '</tbody></table>'
       + '</body></html>';
 
-    // 新しいウィンドウで帳票を表示（Blob URLだとAndroidでprint()が動かないため）
-    var printHtml = html.replace('</body>',
-      '<div class="no-print" style="position:fixed;top:0;left:0;right:0;display:flex;gap:10px;padding:12px 16px;background:#1a73e8;z-index:9999;">'
-      + '<button onclick="window.close();history.back();" style="padding:14px 20px;border:none;border-radius:8px;background:white;color:#1a73e8;font-size:16px;font-weight:bold;cursor:pointer;min-width:80px;">\u2190 \u623b\u308b</button>'
-      + '<button onclick="window.print()" style="padding:14px 20px;border:none;border-radius:8px;background:rgba(255,255,255,0.25);color:white;font-size:16px;font-weight:bold;cursor:pointer;flex:1;">\u5370\u5237 / PDF\u4fdd\u5b58</button>'
-      + '</div>'
-      + '<style>.no-print{} @media print{.no-print{display:none !important;}}</style>'
-      + '<style>body{padding-top:60px;} @media print{body{padding-top:0;}}</style>'
-      + '</body>');
-
-    var w = window.open('', '_blank');
-    if (w) {
-      w.document.write(printHtml);
-      w.document.close();
-    } else {
-      showToast('\u30dd\u30c3\u30d7\u30a2\u30c3\u30d7\u304c\u30d6\u30ed\u30c3\u30af\u3055\u308c\u307e\u3057\u305f\u3002\u8a31\u53ef\u3057\u3066\u304f\u3060\u3055\u3044');
-    }
+    // sessionStorageに保存して専用ページに遷移
+    sessionStorage.setItem('printHtml', html);
+    location.href = './print.html';
   }
 
   // --- タブ切り替え ---
