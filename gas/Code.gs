@@ -19,7 +19,9 @@ var SPREADSHEET_ID = 'ここにスプレッドシートIDを貼り付け';
 var ALLOWED_DRIVERS = [
   { name: '橋本且弥', vehicle: '6240' },
   { name: '清松竜也', vehicle: '6554' },
-  { name: '森下富弘', vehicle: '7956' }
+  { name: '森下富弘', vehicle: '7956' },
+  { name: '山中伸一', vehicle: '6944' },
+  { name: '清松賢弥', vehicle: '7735' }
 ];
 
 // --- バリデーション ---
